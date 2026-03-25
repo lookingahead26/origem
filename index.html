@@ -92,9 +92,26 @@ body { background: var(--bg); color: var(--text); font-family: "Sora", sans-seri
 /* ─── CHARTS ─── */
 .charts-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1.6fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
   gap: 14px;
   margin-bottom: 24px;
+}
+/* Donuts: row 1, side by side */
+.charts-grid .chart-donuts {
+  grid-column: 1 / 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+/* Bar charts: each gets a full column in row 1, or row 2 */
+.charts-grid .chart-bars {
+  grid-column: 2 / 3;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
 .chart-title {
@@ -237,7 +254,7 @@ tbody tr.row-nao   { border-left: 3px solid var(--rose); }
 
 /* Notebook médio */
 @media (max-width: 1280px) {
-  .charts-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .charts-grid { grid-template-columns: 1fr 1fr; }
 }
 
 /* Notebook pequeno / tablet landscape */
@@ -260,7 +277,9 @@ tbody tr.row-nao   { border-left: 3px solid var(--rose); }
   .kpi { padding: 16px 16px; }
   .kpi-value { font-size: 30px; }
   .kpi-label { font-size: 9px; }
-  .charts-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .charts-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
+  .charts-grid .chart-donuts,
+  .charts-grid .chart-bars { grid-column: 1; grid-row: auto; }
   .chart-card { padding: 16px; }
   .chart-wrap { height: 170px; }
   .filters-bar { padding: 14px 14px; gap: 8px; }
@@ -277,7 +296,9 @@ tbody tr.row-nao   { border-left: 3px solid var(--rose); }
   .kpi { padding: 14px 12px; }
   .kpi-value { font-size: 26px; letter-spacing: -1px; }
   .kpi-sub { font-size: 10px; }
-  .charts-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .charts-grid { grid-template-columns: 1fr; gap: 8px; margin-bottom: 14px; }
+  .charts-grid .chart-donuts { grid-template-columns: 1fr 1fr; }
+  .charts-grid .chart-bars  { grid-template-columns: 1fr; }
   .chart-card { padding: 14px 12px; }
   .chart-wrap { height: 155px; }
   .chart-title { font-size: 10px; margin-bottom: 10px; }
@@ -298,7 +319,7 @@ tbody tr.row-nao   { border-left: 3px solid var(--rose); }
 
 /* Very small screens */
 @media (max-width: 360px) {
-  .charts-grid { grid-template-columns: 1fr; }
+  .charts-grid .chart-donuts { grid-template-columns: 1fr; }
   .kpis { grid-template-columns: 1fr 1fr; }
 }
 </style>
@@ -344,21 +365,25 @@ tbody tr.row-nao   { border-left: 3px solid var(--rose); }
 
   <!-- CHARTS -->
   <div class="charts-grid">
-    <div class="chart-card">
-      <div class="chart-title">ICP vs. Fora do ICP</div>
-      <div class="chart-wrap"><canvas id="chartICP"></canvas></div>
+    <div class="chart-donuts">
+      <div class="chart-card">
+        <div class="chart-title">ICP vs. Fora do ICP</div>
+        <div class="chart-wrap"><canvas id="chartICP"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Homens vs. Mulheres</div>
+        <div class="chart-wrap"><canvas id="chartGenero"></canvas></div>
+      </div>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">Homens vs. Mulheres</div>
-      <div class="chart-wrap"><canvas id="chartGenero"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Faixa de Faturamento</div>
-      <div class="chart-wrap"><canvas id="chartFat"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Top Segmentos (ICP)</div>
-      <div class="chart-wrap"><canvas id="chartSeg"></canvas></div>
+    <div class="chart-bars">
+      <div class="chart-card">
+        <div class="chart-title">Faixa de Faturamento</div>
+        <div class="chart-wrap"><canvas id="chartFat"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Top Segmentos (ICP)</div>
+        <div class="chart-wrap"><canvas id="chartSeg"></canvas></div>
+      </div>
     </div>
   </div>
 
