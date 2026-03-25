@@ -7,177 +7,300 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  :root {
-    --red: #E31837;
-    --red-glow: rgba(227,24,55,0.15);
-    --bg: #0a0a0c;
-    --surface: #111114;
-    --surface2: #18181d;
-    --surface3: #1f1f26;
-    --border: rgba(255,255,255,0.07);
-    --border-red: rgba(227,24,55,0.3);
-    --text: #f0f0f5;
-    --text-muted: #888899;
-    --text-dim: #4a4a5a;
-    --icp-green: #22c55e;
-    --icp-green-bg: rgba(34,197,94,0.10);
-    --icp-green-border: rgba(34,197,94,0.25);
-    --icp-red: #f87171;
-    --icp-red-bg: rgba(248,113,113,0.10);
-    --icp-red-border: rgba(248,113,113,0.25);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Sora', sans-serif; min-height: 100vh; }
+:root {
+  --red: #E31837;
+  --red-glow: rgba(227,24,55,0.15);
+  --bg: #0a0a0c;
+  --surface: #111114;
+  --surface2: #18181d;
+  --surface3: #1f1f26;
+  --border: rgba(255,255,255,0.07);
+  --border-red: rgba(227,24,55,0.3);
+  --text: #f0f0f5;
+  --text-muted: #888899;
+  --text-dim: #4a4a5a;
+  --green: #22c55e;
+  --green-bg: rgba(34,197,94,0.10);
+  --green-border: rgba(34,197,94,0.25);
+  --rose: #f87171;
+  --rose-bg: rgba(248,113,113,0.10);
+  --rose-border: rgba(248,113,113,0.25);
+  --blue: #60a5fa;
+  --pink: #f472b6;
+  --purple: #818cf8;
+}
 
-  /* HEADER */
-  .header {
-    background: var(--surface); border-bottom: 1px solid var(--border-red);
-    padding: 28px 40px; display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .header-left { display: flex; align-items: center; gap: 16px; }
-  .logo-mark { width: 42px; height: 42px; background: var(--red); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
-  .header-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
-  .header-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; letter-spacing: 1px; text-transform: uppercase; }
-  .header-badge { background: var(--red-glow); border: 1px solid var(--border-red); color: var(--red); font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: "Sora", sans-serif; min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-  .main { padding: 36px 40px; max-width: 1600px; margin: 0 auto; }
+/* ─── HEADER ─── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-red);
+  padding: 20px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  gap: 12px;
+}
+.header-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.logo-mark {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: var(--red); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 16px;
+}
+.header-text { min-width: 0; }
+.header-title { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: 1px; text-transform: uppercase; }
+.header-badge {
+  flex-shrink: 0;
+  background: var(--red-glow); border: 1px solid var(--border-red);
+  color: var(--red); font-size: 12px; font-weight: 600;
+  padding: 5px 14px; border-radius: 20px; white-space: nowrap;
+}
 
-  /* KPIs */
-  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
-  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; position: relative; overflow: hidden; transition: border-color 0.2s; }
-  .kpi:hover { border-color: var(--border-red); }
-  .kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
-  .kpi.total::before { background: var(--red); }
-  .kpi.icp::before { background: var(--icp-green); }
-  .kpi.nao-icp::before { background: var(--icp-red); }
-  .kpi.taxa::before { background: #818cf8; }
-  .kpi-label { font-size: 11px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
-  .kpi-value { font-size: 42px; font-weight: 800; letter-spacing: -2px; line-height: 1; }
-  .kpi.total .kpi-value { color: var(--red); }
-  .kpi.icp .kpi-value { color: var(--icp-green); }
-  .kpi.nao-icp .kpi-value { color: var(--icp-red); }
-  .kpi.taxa .kpi-value { color: #818cf8; }
-  .kpi-pct { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+/* ─── MAIN ─── */
+.main { padding: 28px 32px; max-width: 1600px; margin: 0 auto; }
 
-  /* CHARTS */
-  .charts-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1.4fr; gap: 16px; margin-bottom: 32px; }
-  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
-  .chart-title { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
-  .chart-title::before { content: ''; width: 3px; height: 14px; background: var(--red); border-radius: 2px; display: inline-block; }
+/* ─── KPIs ─── */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.kpi {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 22px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.kpi:hover { border-color: var(--border-red); transform: translateY(-1px); }
+.kpi::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.kpi.k-total::before  { background: var(--red); }
+.kpi.k-icp::before    { background: var(--green); }
+.kpi.k-nao::before    { background: var(--rose); }
+.kpi.k-taxa::before   { background: var(--purple); }
+.kpi-label { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+.kpi-value { font-size: 38px; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+.kpi.k-total .kpi-value { color: var(--red); }
+.kpi.k-icp   .kpi-value { color: var(--green); }
+.kpi.k-nao   .kpi-value { color: var(--rose); }
+.kpi.k-taxa  .kpi-value { color: var(--purple); }
+.kpi-sub { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
 
-  /* FILTERS */
-  .filters-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-  .filter-group { display: flex; align-items: center; gap: 8px; }
-  .filter-label { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; white-space: nowrap; }
-  select, input[type="text"] { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Sora', sans-serif; font-size: 13px; padding: 8px 12px; outline: none; transition: border-color 0.2s; cursor: pointer; }
-  select:focus, input[type="text"]:focus { border-color: var(--border-red); }
-  input[type="text"] { min-width: 220px; }
-  .filter-reset { background: transparent; border: 1px solid var(--border-red); color: var(--red); font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: background 0.2s; margin-left: auto; }
-  .filter-reset:hover { background: var(--red-glow); }
-  .result-count { font-size: 12px; color: var(--text-muted); }
-  .result-count span { color: var(--red); font-weight: 700; }
+/* ─── CHARTS ─── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.6fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+.chart-title {
+  font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.chart-title::before { content: ""; width: 3px; height: 13px; background: var(--red); border-radius: 2px; flex-shrink: 0; }
+.chart-wrap { position: relative; height: 190px; }
 
-  /* TABLE */
-  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead { background: var(--surface2); }
-  th { padding: 14px 16px; text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
-  th:hover { color: var(--text); }
-  th.sorted { color: var(--red); }
-  td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  tr:last-child td { border-bottom: none; }
-  tbody tr { transition: background 0.15s; }
-  tbody tr:hover { background: var(--surface2); }
+/* ─── FILTERS ─── */
+.filters-bar {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 20px;
+  margin-bottom: 16px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.filter-group { display: flex; align-items: center; gap: 7px; }
+.filter-label { font-size: 10px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; white-space: nowrap; }
+select, input[type="text"] {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text); font-family: "Sora", sans-serif;
+  font-size: 12px; padding: 7px 11px; outline: none;
+  transition: border-color 0.2s; cursor: pointer;
+}
+select:focus, input[type="text"]:focus { border-color: var(--border-red); }
+input[type="text"] { min-width: 200px; }
+.filter-reset {
+  background: transparent; border: 1px solid var(--border-red); color: var(--red);
+  font-family: "Sora", sans-serif; font-size: 11px; font-weight: 600;
+  padding: 7px 14px; border-radius: 8px; cursor: pointer;
+  transition: background 0.2s; margin-left: auto; white-space: nowrap;
+}
+.filter-reset:hover { background: var(--red-glow); }
+.result-count { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+.result-count span { color: var(--red); font-weight: 700; }
 
-  /* ICP row tints */
-  tbody tr.row-icp { border-left: 3px solid var(--icp-green); }
-  tbody tr.row-nao-icp { border-left: 3px solid var(--icp-red); }
+/* ICP TOGGLE */
+.icp-toggle { display: flex; gap: 6px; flex-wrap: wrap; }
+.toggle-btn {
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text-muted); font-family: "Sora", sans-serif;
+  font-size: 11px; font-weight: 600; padding: 6px 12px;
+  border-radius: 8px; cursor: pointer; transition: all 0.15s;
+  white-space: nowrap;
+}
+.toggle-btn.active-icp  { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+.toggle-btn.active-nao  { background: var(--rose-bg); border-color: var(--rose-border); color: var(--rose); }
+.toggle-btn.active-all  { background: var(--red-glow); border-color: var(--border-red); color: var(--red); }
 
-  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--red); border: 1px solid var(--border-red); flex-shrink: 0; }
-  .row-icp .avatar { color: var(--icp-green); border-color: var(--icp-green-border); }
-  .row-nao-icp .avatar { color: var(--icp-red); border-color: var(--icp-red-border); }
-  .name-cell { display: flex; align-items: center; gap: 10px; min-width: 180px; }
-  .name-text { font-weight: 500; }
-  .empresa-text { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+/* ─── TABLE ─── */
+.table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead { background: var(--surface2); }
+th {
+  padding: 12px 14px; text-align: left;
+  font-size: 9px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--text-muted); border-bottom: 1px solid var(--border);
+  white-space: nowrap; cursor: pointer; user-select: none;
+}
+th:hover { color: var(--text); }
+th.sorted { color: var(--red); }
+td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.15s; }
+tbody tr:hover { background: var(--surface2); }
+tbody tr.row-icp   { border-left: 3px solid var(--green); }
+tbody tr.row-nao   { border-left: 3px solid var(--rose); }
 
-  .icp-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-  .icp-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
-  .icp-badge.icp { background: var(--icp-green-bg); color: var(--icp-green); border: 1px solid var(--icp-green-border); }
-  .icp-badge.icp::before { background: var(--icp-green); }
-  .icp-badge.nao { background: var(--icp-red-bg); color: var(--icp-red); border: 1px solid var(--icp-red-border); }
-  .icp-badge.nao::before { background: var(--icp-red); }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface3); display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.row-icp .avatar { color: var(--green); border: 1px solid var(--green-border); }
+.row-nao .avatar { color: var(--rose);  border: 1px solid var(--rose-border); }
+.name-cell { display: flex; align-items: center; gap: 10px; }
+.name-text { font-weight: 500; font-size: 13px; }
+.empresa-text { color: var(--text-muted); font-size: 11px; margin-top: 1px; }
 
-  .fat-chip { background: var(--surface3); border: 1px solid var(--border); color: var(--text-muted); font-size: 11px; padding: 3px 9px; border-radius: 5px; white-space: nowrap; }
+.icp-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 6px;
+  font-size: 10px; font-weight: 600; white-space: nowrap;
+}
+.icp-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; }
+.icp-badge.icp { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.icp-badge.icp::before { background: var(--green); }
+.icp-badge.nao { background: var(--rose-bg);  color: var(--rose);  border: 1px solid var(--rose-border); }
+.icp-badge.nao::before { background: var(--rose); }
 
-  .contact-cell { display: flex; flex-direction: column; gap: 3px; min-width: 160px; }
-  .contact-email { font-size: 11px; color: var(--text-muted); }
-  .contact-email a { color: var(--text-muted); text-decoration: none; }
-  .contact-email a:hover { color: var(--red); }
-  .contact-tel { font-size: 11px; color: var(--text-dim); }
+.fat-chip { background: var(--surface3); border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; padding: 3px 8px; border-radius: 5px; white-space: nowrap; }
+.contact-cell { display: flex; flex-direction: column; gap: 3px; }
+.contact-email { font-size: 11px; color: var(--text-muted); }
+.contact-email a { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+.contact-email a:hover { color: var(--red); }
+.contact-tel { font-size: 11px; color: var(--text-dim); }
 
-  /* PAGINATION */
-  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top: 1px solid var(--border); }
-  .page-info { font-size: 12px; color: var(--text-muted); }
-  .page-buttons { display: flex; gap: 6px; }
-  .page-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: 'Sora', sans-serif; font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
-  .page-btn:hover:not(:disabled) { border-color: var(--border-red); color: var(--red); }
-  .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  .page-btn.active { background: var(--red); border-color: var(--red); color: white; }
+/* ─── PAGINATION ─── */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-top: 1px solid var(--border); gap: 10px; flex-wrap: wrap;
+}
+.page-info { font-size: 12px; color: var(--text-muted); }
+.page-buttons { display: flex; gap: 5px; flex-wrap: wrap; }
+.page-btn {
+  background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+  font-family: "Sora", sans-serif; font-size: 12px;
+  padding: 5px 11px; border-radius: 6px; cursor: pointer; transition: all 0.15s;
+}
+.page-btn:hover:not(:disabled) { border-color: var(--border-red); color: var(--red); }
+.page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.page-btn.active { background: var(--red); border-color: var(--red); color: white; }
 
-  /* ICP TOGGLE BUTTONS */
-  .icp-toggle { display: flex; gap: 8px; }
-  .toggle-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600; padding: 7px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s; letter-spacing: 0.4px; }
-  .toggle-btn.active-icp { background: var(--icp-green-bg); border-color: var(--icp-green-border); color: var(--icp-green); }
-  .toggle-btn.active-nao { background: var(--icp-red-bg); border-color: var(--icp-red-border); color: var(--icp-red); }
-  .toggle-btn.active-all { background: var(--red-glow); border-color: var(--border-red); color: var(--red); }
+/* ═══════════════════════════════════════
+   MOBILE — cards instead of table rows
+═══════════════════════════════════════ */
+.mobile-cards { display: none; }
+.mobile-card {
+  background: var(--surface2); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 10px;
+  border-left: 3px solid var(--border);
+}
+.mobile-card.row-icp { border-left-color: var(--green); }
+.mobile-card.row-nao { border-left-color: var(--rose); }
+.mc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.mc-info { flex: 1; min-width: 0; }
+.mc-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mc-empresa { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.mc-body { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; }
+.mc-field label { display: block; font-size: 9px; font-weight: 600; color: var(--text-dim); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 2px; }
+.mc-field span, .mc-field a { color: var(--text-muted); text-decoration: none; }
+.mc-field a:hover { color: var(--red); }
+.mc-footer { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
 
-  @media (max-width: 1100px) {
-    .kpis { grid-template-columns: repeat(2,1fr); }
-    .charts-row { grid-template-columns: 1fr 1fr; }
-    .main { padding: 24px 20px; }
-    .header { padding: 18px 24px; }
-    .header-title { font-size: 18px; }
-  }
+/* ═══════════════════════════════════════
+   BREAKPOINTS
+═══════════════════════════════════════ */
 
-  @media (max-width: 768px) {
-    .header { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
-    .header-title { font-size: 17px; }
-    .header-sub { font-size: 10px; }
-    .logo-mark { width: 36px; height: 36px; font-size: 15px; }
-    .header-badge { font-size: 11px; padding: 4px 11px; }
-    .main { padding: 16px; }
-    .kpis { grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 20px; }
-    .kpi { padding: 18px 16px; }
-    .kpi-value { font-size: 32px; }
-    .kpi-label { font-size: 10px; }
-    .charts-row { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-    .chart-card { padding: 18px 16px; }
-    .filters-bar { padding: 14px 16px; gap: 10px; flex-direction: column; align-items: stretch; }
-    .filter-group { flex-wrap: wrap; }
-    .icp-toggle { flex-wrap: wrap; }
-    .toggle-btn { font-size: 10px; padding: 6px 10px; }
-    input[type="text"] { min-width: unset; width: 100%; }
-    select { width: 100%; }
-    .filter-reset { margin-left: 0; width: 100%; text-align: center; }
-    .result-count { text-align: center; width: 100%; }
-    td { padding: 10px 12px; }
-    th { padding: 10px 12px; font-size: 9px; }
-    .kpi-pct { font-size: 11px; }
-    .pagination { flex-direction: column; gap: 10px; align-items: center; }
-    .name-cell { min-width: unset; }
-    .contact-cell { min-width: unset; }
-    .fat-chip { font-size: 10px; }
-  }
+/* Notebook médio */
+@media (max-width: 1280px) {
+  .charts-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
 
-  @media (max-width: 480px) {
-    .kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
-    .kpi { padding: 14px 12px; }
-    .kpi-value { font-size: 28px; }
-    .header-badge { display: none; }
-    .charts-row { grid-template-columns: 1fr; }
-  }
+/* Notebook pequeno / tablet landscape */
+@media (max-width: 1024px) {
+  .main { padding: 20px 20px; }
+  .header { padding: 16px 20px; }
+  .kpis { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .charts-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .kpi-value { font-size: 32px; }
+}
+
+/* Tablet portrait */
+@media (max-width: 768px) {
+  .main { padding: 16px 14px; }
+  .header { padding: 14px 16px; }
+  .header-title { font-size: 17px; }
+  .header-sub { display: none; }
+  .logo-mark { width: 36px; height: 36px; font-size: 14px; }
+  .kpis { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+  .kpi { padding: 16px 16px; }
+  .kpi-value { font-size: 30px; }
+  .kpi-label { font-size: 9px; }
+  .charts-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .chart-card { padding: 16px; }
+  .chart-wrap { height: 170px; }
+  .filters-bar { padding: 14px 14px; gap: 8px; }
+  input[type="text"] { min-width: 0; width: 100%; }
+}
+
+/* Mobile */
+@media (max-width: 540px) {
+  .main { padding: 12px 12px; }
+  .header { padding: 12px 14px; }
+  .header-title { font-size: 16px; }
+  .header-badge { font-size: 10px; padding: 4px 10px; }
+  .kpis { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+  .kpi { padding: 14px 12px; }
+  .kpi-value { font-size: 26px; letter-spacing: -1px; }
+  .kpi-sub { font-size: 10px; }
+  .charts-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .chart-card { padding: 14px 12px; }
+  .chart-wrap { height: 155px; }
+  .chart-title { font-size: 10px; margin-bottom: 10px; }
+  /* Filters stacked */
+  .filters-bar { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px; }
+  .filter-group { flex-direction: column; align-items: flex-start; gap: 5px; width: 100%; }
+  .icp-toggle { width: 100%; }
+  .toggle-btn { flex: 1; text-align: center; font-size: 10px; padding: 8px 6px; }
+  select { width: 100%; }
+  .filter-reset { margin-left: 0; width: 100%; text-align: center; padding: 9px; }
+  .result-count { text-align: center; }
+  /* Hide table, show cards */
+  .table-wrap { display: none; }
+  .mobile-cards { display: block; padding: 12px; }
+  .pagination { padding: 12px 14px; justify-content: center; }
+  .page-info { width: 100%; text-align: center; order: -1; }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .charts-grid { grid-template-columns: 1fr; }
+  .kpis { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
@@ -185,7 +308,7 @@
 <header class="header">
   <div class="header-left">
     <div class="logo-mark">V4</div>
-    <div>
+    <div class="header-text">
       <div class="header-title">Imersão Origem</div>
       <div class="header-sub">Painel de Convidados</div>
     </div>
@@ -195,55 +318,58 @@
 
 <main class="main">
 
+  <!-- KPIs -->
   <div class="kpis">
-    <div class="kpi total">
+    <div class="kpi k-total">
       <div class="kpi-label">Total Convidados</div>
-      <div class="kpi-value" id="kpi-total">–</div>
-      <div class="kpi-pct">base completa</div>
+      <div class="kpi-value">141</div>
+      <div class="kpi-sub">base completa</div>
     </div>
-    <div class="kpi icp">
+    <div class="kpi k-icp">
       <div class="kpi-label">Perfil ICP Ideal</div>
       <div class="kpi-value" id="kpi-icp">–</div>
-      <div class="kpi-pct" id="kpi-icp-pct">–</div>
+      <div class="kpi-sub" id="kpi-icp-sub">–</div>
     </div>
-    <div class="kpi nao-icp">
+    <div class="kpi k-nao">
       <div class="kpi-label">Fora do ICP</div>
       <div class="kpi-value" id="kpi-nao">–</div>
-      <div class="kpi-pct" id="kpi-nao-pct">–</div>
+      <div class="kpi-sub" id="kpi-nao-sub">–</div>
     </div>
-    <div class="kpi taxa">
+    <div class="kpi k-taxa">
       <div class="kpi-label">Taxa de Aderência ICP</div>
       <div class="kpi-value" id="kpi-taxa">–</div>
-      <div class="kpi-pct">% do total</div>
+      <div class="kpi-sub">do total de convidados</div>
     </div>
   </div>
 
-  <div class="charts-row">
+  <!-- CHARTS -->
+  <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-title">ICP vs. Fora do ICP</div>
-      <div style="position:relative;height:200px"><canvas id="chartICP"></canvas></div>
+      <div class="chart-wrap"><canvas id="chartICP"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Homens vs. Mulheres</div>
-      <div style="position:relative;height:200px"><canvas id="chartGenero"></canvas></div>
+      <div class="chart-wrap"><canvas id="chartGenero"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Faixa de Faturamento</div>
-      <div style="position:relative;height:200px"><canvas id="chartFat"></canvas></div>
+      <div class="chart-wrap"><canvas id="chartFat"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Top Segmentos (ICP)</div>
-      <div style="position:relative;height:200px"><canvas id="chartSeg"></canvas></div>
+      <div class="chart-wrap"><canvas id="chartSeg"></canvas></div>
     </div>
   </div>
 
+  <!-- FILTERS -->
   <div class="filters-bar">
     <div class="filter-group">
       <span class="filter-label">Buscar</span>
       <input type="text" id="search" placeholder="Nome, empresa, cargo…">
     </div>
     <div class="filter-group">
-      <span class="filter-label">Perfil</span>
+      <span class="filter-label">Perfil ICP</span>
       <div class="icp-toggle">
         <button class="toggle-btn active-all" id="btn-all" onclick="setICP('all')">Todos</button>
         <button class="toggle-btn" id="btn-icp" onclick="setICP('icp')">✦ ICP Ideal</button>
@@ -262,6 +388,7 @@
     <button class="filter-reset" onclick="resetFilters()">↺ Limpar</button>
   </div>
 
+  <!-- TABLE (desktop/notebook) -->
   <div class="table-card">
     <div class="table-wrap">
       <table>
@@ -278,6 +405,8 @@
         <tbody id="tableBody"></tbody>
       </table>
     </div>
+    <!-- CARDS (mobile) -->
+    <div class="mobile-cards" id="mobileCards"></div>
     <div class="pagination">
       <div class="page-info" id="page-info">–</div>
       <div class="page-buttons" id="page-buttons"></div>
@@ -289,7 +418,12 @@
 <script>
 const RAW = [{"Nome": "Tarcio Almeida", "Empresa": "Rihappy", "Cargo": "Tecnologia e Inovação", "Segmento": "Tecnologia e Inovação", "Faturamento": "Mais de R$ 100 milhões", "Email": "tarciormalmeida@gmail.com", "Telefone": "11945415953", "ICP": "icp", "Genero": "M"}, {"Nome": "Tiago Calazans Rodrigues Pinheiro", "Empresa": "Invest Solar", "Cargo": "Energia solar", "Segmento": "Energia solar", "Faturamento": "Entre R$ 3,6 milhões e R$ 5 milhões", "Email": "trodriguespinheiro@gmail.com", "Telefone": "(94)99134-3769", "ICP": "icp", "Genero": "M"}, {"Nome": "Juliano Lopes Delzi Ferreira", "Empresa": "Vegas Vigilância e Segurança", "Cargo": "Tecnologia e Inovação", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "julianolopes47@gmail.com", "Telefone": "24999890347", "ICP": "icp", "Genero": "M"}, {"Nome": "Michele Matos", "Empresa": "Ei Design", "Cargo": "Marketing", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "michelematos@eidesignart.com", "Telefone": "11954688244", "ICP": "nao", "Genero": "F"}, {"Nome": "André Marques", "Empresa": "J3M", "Cargo": "Marketing", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "vendas@j3mmarketing.com.br", "Telefone": "11913244078", "ICP": "nao", "Genero": "M"}, {"Nome": "Wesley Santos", "Empresa": "Objetiva Consórcio", "Cargo": "Investimento | Financeiro", "Segmento": "Gerente", "Faturamento": "Mais de R$ 100 milhões", "Email": "wesley@objetivaconsorcio.com.br", "Telefone": "(11) 97665-0949", "ICP": "icp", "Genero": "M"}, {"Nome": "Edson Cavalheiro de Souza", "Empresa": "Cavalheiro imóveis", "Cargo": "Imobiliária", "Segmento": "Sócio ou Fundador", "Faturamento": "Menos de R$ 1 milhão", "Email": "Cavalheiro.planoecia@gmail.com", "Telefone": "11971788626", "ICP": "nao", "Genero": "M"}, {"Nome": "Flávio Fialho Simas", "Empresa": "DI Eventos (infos abaixo)  e Baby Village Educação Infantil", "Cargo": "Assessoria estratégica para ações e eventos B2B", "Segmento": "Sócio ou Fundador", "Faturamento": "Entre R$ 3,6 milhões e R$ 5 milhões", "Email": "Flaviosimas@gmail.com", "Telefone": "11 98715 5033", "ICP": "icp", "Genero": "M"}, {"Nome": "Alessandra gomes souza", "Empresa": "ROLIBRAS SUPRIMENTOS INDUSTRIAIS", "Cargo": "SUPRIMENTOS PARA INDUSTRIAS", "Segmento": "Gerente", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "agsszouzagomes@gmail.com", "Telefone": "5511973648272", "ICP": "icp", "Genero": "F"}, {"Nome": "ULISSES FERREIRA", "Empresa": "ARCA", "Cargo": "E- commerce | Marketplace", "Segmento": "Presidente ou CEO", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "upgferreira@gmail.com", "Telefone": "12974059088", "ICP": "icp", "Genero": "M"}, {"Nome": "Julio Cesar Ferreira Ortiz", "Empresa": "EcoStorage", "Cargo": "Tecnologia e Inovação", "Segmento": "Consultor Empresarial", "Faturamento": "Entre R$ 8 milhões e R$ 10 milhões", "Email": "julio.ortiz@ecostorage.com.br", "Telefone": "(11)986930121", "ICP": "icp", "Genero": "M"}, {"Nome": "kaynan silveira Laureano", "Empresa": "2K Vision Marketing", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "kaynansilveira@gmail.com", "Telefone": "15988210872", "ICP": "nao", "Genero": "M"}, {"Nome": "Daniel Ferreira Pinto", "Empresa": "Stone", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "danielfpinto@hotmail.com", "Telefone": "11969817595", "ICP": "nao", "Genero": "M"}, {"Nome": "Clodoaldo Alexandre dos Santos", "Empresa": "Documínio", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "clodoaldo@documinio.com.br", "Telefone": "11984171235", "ICP": "nao", "Genero": "M"}, {"Nome": "Jakeline santos cavalcante", "Empresa": "Fort Rubber", "Cargo": "Vendas", "Segmento": "Vedação", "Faturamento": "Menos de R$ 1 milhão", "Email": "jack.cavalcante@gmail.com", "Telefone": "11985780416", "ICP": "nao", "Genero": "F"}, {"Nome": "Raphael Mendonça Leonel", "Empresa": "Vieira e Leonel Advogados", "Cargo": "Sócio ou Fundador", "Segmento": "Jurídico", "Faturamento": "Menos de R$ 1 milhão", "Email": "raphaelleonel.juridico@gmail.com", "Telefone": "31993119593", "ICP": "nao", "Genero": "M"}, {"Nome": "Thiago Cardim", "Empresa": "YouCon Arquitetura e Engenharia", "Cargo": "Presidente ou CEO", "Segmento": "Construção Civil  | Incorporadora", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "contato@youconprojetos.com.br", "Telefone": "35987074350", "ICP": "icp", "Genero": "M"}, {"Nome": "Rafael Lima de melo", "Empresa": "HARD ROÇA PUB BURGUER", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Hardrocapub@icloud.com", "Telefone": "(11)95093-7742", "ICP": "icp", "Genero": "M"}, {"Nome": "Lucimara Fernandes", "Empresa": "Palacio Engenharia", "Cargo": "Sócio ou Fundador", "Segmento": "Prestação de serviço combate a incêndio", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "lucimmara@hotmail.com", "Telefone": "12 99212-2036", "ICP": "icp", "Genero": "F"}, {"Nome": "Rafael Alcantara da Silva", "Empresa": "Vemco Group", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "ra@vemcogroup.com.br", "Telefone": "11-998988448", "ICP": "icp", "Genero": "M"}, {"Nome": "Jakeline santos cavalcante", "Empresa": "Fort Rubber", "Cargo": "Vendas", "Segmento": "Vedação", "Faturamento": "Menos de R$ 1 milhão", "Email": "jack.cavalcante@gmail.com", "Telefone": "11985780416", "ICP": "nao", "Genero": "F"}, {"Nome": "Raphael Mendonça Leonel", "Empresa": "Vieira e Leonel Advogados", "Cargo": "Sócio ou Fundador", "Segmento": "Jurídico", "Faturamento": "Menos de R$ 1 milhão", "Email": "raphaelleonel.juridico@gmail.com", "Telefone": "31993119593", "ICP": "nao", "Genero": "M"}, {"Nome": "Gil Fernando Oliveira Duque Junior", "Empresa": "Vegas Vigilância", "Cargo": "Diretor", "Segmento": "Segurança", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "gilduquejunior@gmail.com", "Telefone": "24992967691", "ICP": "icp", "Genero": "M"}, {"Nome": "Alex delgado Gonçalves casanas", "Empresa": "Faculdade cci", "Cargo": "Diretor", "Segmento": "Educação", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "trabalhos.brulex@gmail.com", "Telefone": "61 981356407", "ICP": "icp", "Genero": "M"}, {"Nome": "Anne Caroline", "Empresa": "Teo Consultoria", "Cargo": "Coordenador", "Segmento": "Investimento | Financeiro", "Faturamento": "Entre R$ 8 milhões e R$ 10 milhões", "Email": "Annecaroline@teoconsultoria.com.br", "Telefone": "11960951577", "ICP": "icp", "Genero": "F"}, {"Nome": "Vanessa Marques", "Empresa": "Santa Bárbara Agronegócios LTDA", "Cargo": "Diretor", "Segmento": "Agronegócios", "Faturamento": "Entre R$ 50 milhões e R$ 100 milhões", "Email": "vanessa.administrativo@agrocomercialsantabarbara.com.br", "Telefone": "11973514119", "ICP": "icp", "Genero": "F"}, {"Nome": "Alexandre De Carvalho Salomone Junior", "Empresa": "Renova auto center", "Cargo": "Sócio ou Fundador", "Segmento": "Oficina funilaria", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Ale_salomone@hotmail.com", "Telefone": "11 93006-4552", "ICP": "icp", "Genero": "M"}, {"Nome": "Daniel Biondi", "Empresa": "FAR Live Marketing", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "DANIEL@FARAGENCIA.COM", "Telefone": "(19)99199-8288", "ICP": "icp", "Genero": "M"}, {"Nome": "Eduardo Abreu", "Empresa": "Zacani Vradil", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "eduardo@zacanibrasil.com.br", "Telefone": "35991740393", "ICP": "icp", "Genero": "M"}, {"Nome": "Jennifer Maria de Souza Oliveira", "Empresa": "V4 company", "Cargo": "Analista", "Segmento": "Marketing", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "Jennifer.mdso@gmail.com", "Telefone": "11987461504", "ICP": "icp", "Genero": "F"}, {"Nome": "Edemilson Nunes", "Empresa": "DVinciLabs Innovation", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 5 milhões e R$ 8 milhões", "Email": "edemilson.nunes@dvincilab.com.br", "Telefone": "11991676767", "ICP": "icp", "Genero": "M"}, {"Nome": "Tiago Silva", "Empresa": "Movement Guarulhos", "Cargo": "Gerente", "Segmento": "Setor de equipamentos Fitness", "Faturamento": "Entre R$ 3,6 milhões e R$ 5 milhões", "Email": "tiago.silva@movementguarulhos.com.br", "Telefone": "11995999801", "ICP": "icp", "Genero": "M"}, {"Nome": "Sergio", "Empresa": "Zacani Brasil", "Cargo": "Diretor", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "eduardoabreu@zacanibrasil.com", "Telefone": "35991740393", "ICP": "icp", "Genero": "M"}, {"Nome": "Saymon Oliveira Macedo", "Empresa": "X1 Club", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "saymonom@gmail.com", "Telefone": "(63)99259-5358", "ICP": "nao", "Genero": "M"}, {"Nome": "Mayara Rodrigues de Oliveira Macedo", "Empresa": "X1 CLUB", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "mayaramacedo.om@gmail.com", "Telefone": "63992412760", "ICP": "icp", "Genero": "F"}, {"Nome": "Henrique Matos", "Empresa": "MS+ Reformas", "Cargo": "Sócio ou Fundador", "Segmento": "Construção Civil  | Incorporadora", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "ms10reformas@gmail.com", "Telefone": "11946017211", "ICP": "icp", "Genero": "M"}, {"Nome": "Stênio Wandil Teixeira Da Silva", "Empresa": "WA Tele Saúde", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "steniotw@gmail.com", "Telefone": "61992092268", "ICP": "nao", "Genero": "M"}, {"Nome": "Lourival Biscaro Ganzerli", "Empresa": "CORPSA Assessoria em Crédito Imobiliário", "Cargo": "Sócio ou Fundador", "Segmento": "Investimento | Financeiro", "Faturamento": "Entre R$ 3,6 milhões e R$ 5 milhões", "Email": "jrganzerli@yahoo.com.br", "Telefone": "1699178-1112", "ICP": "icp", "Genero": "M"}, {"Nome": "Daniel Castelo Rocha", "Empresa": "DCR SERVICOS MEDICOS E TREINAMENTOS LTDA", "Cargo": "Sócio ou Fundador", "Segmento": "Saúde", "Faturamento": "Menos de R$ 1 milhão", "Email": "danielcastelorocha@gmail.com", "Telefone": "(85)996738800", "ICP": "nao", "Genero": "M"}, {"Nome": "SAMANTA FEIJO RODRIGUES", "Empresa": "Prime Mix", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Menos de R$ 1 milhão", "Email": "samfeijo@gmail.com", "Telefone": "11969019983", "ICP": "nao", "Genero": "F"}, {"Nome": "Isadora Cristina Prati", "Empresa": "Dapo Brasil", "Cargo": "Sócio ou Fundador", "Segmento": "Jogos, lazer, esporte", "Faturamento": "Menos de R$ 1 milhão", "Email": "isacprati@gmail.com", "Telefone": "34992053090", "ICP": "nao", "Genero": "F"}, {"Nome": "Thiago Nogueira", "Empresa": "MN Log", "Cargo": "Sócio ou Fundador", "Segmento": "Transporte e Mobilidade", "Faturamento": "Entre R$ 8 milhões e R$ 10 milhões", "Email": "thiago_nogueira@hotmail.com", "Telefone": "11949700617", "ICP": "icp", "Genero": "M"}, {"Nome": "Reginaldo Ferrante", "Empresa": "Matos Projects", "Cargo": "Sócio ou Fundador", "Segmento": "Consultoria de Negócios", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "reginaldo@matosprojects.com.br", "Telefone": "11 991986344", "ICP": "icp", "Genero": "M"}, {"Nome": "Kauany vitoria Alves da silva", "Empresa": "Kazy - Kauany", "Cargo": "Presidente ou CEO", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "Agenciakazy@gmail.com", "Telefone": "19978292855", "ICP": "nao", "Genero": "F"}, {"Nome": "Bruno Correia", "Empresa": "Yoru", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Menos de R$ 1 milhão", "Email": "Brunocorreia0@hotmail.com", "Telefone": "1198130880", "ICP": "nao", "Genero": "M"}, {"Nome": "Guilherme Bispo", "Empresa": "Eugênia", "Cargo": "Sócio ou Fundador", "Segmento": "Growth marketing : deliverys, profissionais liberais e etc.", "Faturamento": "Menos de R$ 1 milhão", "Email": "Guilhermepaulisantos@gmail.com", "Telefone": "11973722444", "ICP": "nao", "Genero": "M"}, {"Nome": "Fábio Miranda", "Empresa": "Enuve", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "fabio.miranda@enuve.com.br", "Telefone": "11971035443", "ICP": "icp", "Genero": "M"}, {"Nome": "Vinicius Medeia Gomes", "Empresa": "Lelo Marketing", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "vinimgomes@hotmail.com", "Telefone": "19998814570", "ICP": "nao", "Genero": "M"}, {"Nome": "Charles Souza Souza", "Empresa": "Elétrica Raio", "Cargo": "Sócio ou Fundador", "Segmento": "Varejos", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "charlessouza137@gmail.com", "Telefone": "21998998902", "ICP": "icp", "Genero": "M"}, {"Nome": "NATASHA KEIKO YOSHIDA BARBOZA", "Empresa": "BARBOZA DIESEL", "Cargo": "Sócio ou Fundador", "Segmento": "Mecânica", "Faturamento": "Menos de R$ 1 milhão", "Email": "barbozadiesel@gmail.com", "Telefone": "11997166959", "ICP": "nao", "Genero": "F"}, {"Nome": "Cassia Maria Vilela", "Empresa": "Via Sport", "Cargo": "Sócio ou Fundador", "Segmento": "Moda", "Faturamento": "Menos de R$ 1 milhão", "Email": "cassiacmv81@hotmail.com", "Telefone": "34999918778", "ICP": "nao", "Genero": "F"}, {"Nome": "Amalia Roque", "Empresa": "Multa Delete", "Cargo": "Sócio ou Fundador", "Segmento": "Serviços Jurídicos", "Faturamento": "Menos de R$ 1 milhão", "Email": "amalia@multadelete.com.br", "Telefone": "11964278125", "ICP": "nao", "Genero": "F"}, {"Nome": "Flavio Molina", "Empresa": "Numen", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Mais de R$ 100 milhões", "Email": "flavio.molina@numenit.com", "Telefone": "11983536664", "ICP": "icp", "Genero": "M"}, {"Nome": "Anderson viana", "Empresa": "Vianna imobiliaria", "Cargo": "Sócio ou Fundador", "Segmento": "Imobiliaria", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "anderson@viannaimobiliaria.com.br", "Telefone": "11947666580", "ICP": "icp", "Genero": "M"}, {"Nome": "Eduardo Saueia Bueno", "Empresa": "Focus produções", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Entre R$ 50 milhões e R$ 100 milhões", "Email": "picolino1414@gmail.com", "Telefone": "11986811019", "ICP": "icp", "Genero": "M"}, {"Nome": "João Paulo Sanches Rosalem", "Empresa": "Sanches Contábil", "Cargo": "Sócio ou Fundador", "Segmento": "Investimento | Financeiro", "Faturamento": "Menos de R$ 1 milhão", "Email": "joaopaulo@sanchescontabil.com.br", "Telefone": "14997698908", "ICP": "nao", "Genero": "M"}, {"Nome": "Maykon Cardoso da Silva", "Empresa": "Maykon Cardoso imóveis", "Cargo": "Sócio ou Fundador", "Segmento": "Imobiliária", "Faturamento": "Menos de R$ 1 milhão", "Email": "maykon.imovel@gmail.com", "Telefone": "11967673563", "ICP": "nao", "Genero": "M"}, {"Nome": "Rodrigo Alonso", "Empresa": "Kubbo New", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "prodrigoalonso19@gmail.com", "Telefone": "11983327356", "ICP": "nao", "Genero": "M"}, {"Nome": "Wesley Elias", "Empresa": "Mike School", "Cargo": "Gerente", "Segmento": "Educação", "Faturamento": "Entre R$ 5 milhões e R$ 8 milhões", "Email": "wesleyelias13@gmail.com", "Telefone": "11940215652", "ICP": "icp", "Genero": "M"}, {"Nome": "Douglas de jesus santos", "Empresa": "Douglas Jesus", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "douglas.terra.dj@gmail.com", "Telefone": "11941033850", "ICP": "nao", "Genero": "M"}, {"Nome": "Gustavo Rocha", "Empresa": "FutureMove", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "gustavo.rocha@futuremove.com.br", "Telefone": "11999783379", "ICP": "nao", "Genero": "M"}, {"Nome": "Bianca Gallego", "Empresa": "on Job's", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "biancagallego80@gmail.com", "Telefone": "15997336649", "ICP": "nao", "Genero": "F"}, {"Nome": "FILIPE ANDRADE BARBOZA", "Empresa": "BARBOZA DIESEL", "Cargo": "Sócio ou Fundador", "Segmento": "MECÂNICA", "Faturamento": "Menos de R$ 1 milhão", "Email": "filipe.bzdiesel@gmail.com", "Telefone": "11950797162", "ICP": "nao", "Genero": "M"}, {"Nome": "Monique Gonçalves de Carvalho", "Empresa": "V4 COMPANY - LIMA E SOARES & CO", "Cargo": "SDR, CLOSER", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "monique.carvalho@v4company.com", "Telefone": "11976903909", "ICP": "nao", "Genero": "F"}, {"Nome": "Michael Michel Lima de Souza", "Empresa": "Emme soluções logísticas integradas e multisserviços Ltda", "Cargo": "Sócio ou Fundador", "Segmento": "Prestação serviços logísticos", "Faturamento": "Menos de R$ 1 milhão", "Email": "Michael@mloglogistica.com.br", "Telefone": "11979886938", "ICP": "nao", "Genero": "M"}, {"Nome": "Daniel Cavalacante Brito", "Empresa": "SpaceIA", "Cargo": "Presidente ou CEO", "Segmento": "Tecnologia e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "danielbrito.emp@gmail.com", "Telefone": "11952160719", "ICP": "nao", "Genero": "M"}, {"Nome": "Gustavo", "Empresa": "Vertex Company", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "Gm2707684@gmail.com", "Telefone": "11945687754", "ICP": "nao", "Genero": "M"}, {"Nome": "leandro pazitte", "Empresa": "M & P Marketing e Tecnologia", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing - Tecnologoa e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "pazitte@hotmail.com", "Telefone": "11998200250", "ICP": "nao", "Genero": "M"}, {"Nome": "fabio rogerio  da Silva", "Empresa": "X Seeds Business Growth", "Cargo": "Presidente ou CEO", "Segmento": "Educação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "fabiosilva@xseeds.com.br", "Telefone": "11996263338", "ICP": "icp", "Genero": "M"}, {"Nome": "Laryssa Soares Silva", "Empresa": "LS International", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "lary.soares004@gmail.com", "Telefone": "11951904816", "ICP": "icp", "Genero": "F"}, {"Nome": "Myllena Rodrigues Franco", "Empresa": "Mr Franco contabilidade", "Cargo": "Sócio ou Fundador", "Segmento": "Contabilidade", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Myllenarfranco@hotmail.com", "Telefone": "11948748160", "ICP": "icp", "Genero": "F"}, {"Nome": "Celso Luís Barreto Pagani", "Empresa": "Em formação", "Cargo": "Sócio ou Fundador", "Segmento": "Educação", "Faturamento": "Menos de R$ 1 milhão", "Email": "clbpagani@gmail.com", "Telefone": "(19)99809-2056", "ICP": "nao", "Genero": "M"}, {"Nome": "Pedro Magalhães de Faria Júnior", "Empresa": "TAF & Co", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "pedro.magalhaes@v4company.com", "Telefone": "37999639393", "ICP": "icp", "Genero": "M"}, {"Nome": "Nelson Gabriel Santana da Frota", "Empresa": "FTC Marketing", "Cargo": "Gerente", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "nelsongabrieltg@gmail.com", "Telefone": "11950468868", "ICP": "nao", "Genero": "M"}, {"Nome": "Mariana", "Empresa": "Neo-X radiologia", "Cargo": "Sócio ou Fundador", "Segmento": "Saúde", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "mamisson@hotmail.com", "Telefone": "34 9978 8180", "ICP": "icp", "Genero": "F"}, {"Nome": "Ângelo Ribeiro", "Empresa": "Fantástica Fábrica", "Cargo": "Coordenador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "angelorenatoribeiro@gmail.com", "Telefone": "11 98194-3773", "ICP": "icp", "Genero": "M"}, {"Nome": "Nicholas volpj", "Empresa": "Nevus Digital", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Nicholas_farina@hotmail.com", "Telefone": "11983018823", "ICP": "icp", "Genero": "M"}, {"Nome": "Felipe Van Eyken", "Empresa": "Chili", "Cargo": "Gerente", "Segmento": "Tecnologia e Inovação", "Faturamento": "Mais de R$ 100 milhões", "Email": "felipe.fernandes@chili.pa", "Telefone": "35998410720", "ICP": "icp", "Genero": "M"}, {"Nome": "Paloma Dryelle Alves Santos", "Empresa": "V4 Company", "Cargo": "Social Media", "Segmento": "Marketing", "Faturamento": "Mais de R$ 100 milhões", "Email": "paloma.dryelle@v4company.com", "Telefone": "1184868232", "ICP": "icp", "Genero": "F"}, {"Nome": "Natali Santana Vilas Boas Petri", "Empresa": "Essence Gestão e Liderança", "Cargo": "Sócio ou Fundador", "Segmento": "Educação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "natalisantana7@hotmail.com", "Telefone": "12996737898", "ICP": "icp", "Genero": "F"}, {"Nome": "Wellington Tenorio Da Silva", "Empresa": "WeW pizzaria", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Wellington.tenorio@yahoo.com", "Telefone": "11 957618831", "ICP": "icp", "Genero": "M"}, {"Nome": "Ana Paula de Souza", "Empresa": "WA Tele Saúde", "Cargo": "Vice - Presidente ou C - Level", "Segmento": "Tecnologia e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "paulinhasja@gmail.com", "Telefone": "61991740381", "ICP": "nao", "Genero": "F"}, {"Nome": "Luciano Alves Malara", "Empresa": "Missão Compliance Consultoria Ltda", "Cargo": "Sócio ou Fundador", "Segmento": "Serviços de Governança, Compliance e Investigações", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Luciano.malara@missaocompliance.com.br", "Telefone": "11 99431-3258", "ICP": "icp", "Genero": "M"}, {"Nome": "Fabio Roberto rampasso", "Empresa": "Metal indianapolis", "Cargo": "Diretor", "Segmento": "Industria", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "fabio@indianapolis.com.br", "Telefone": "11972048045", "ICP": "icp", "Genero": "M"}, {"Nome": "Luiz Otávio de Paula Porto", "Empresa": "Vine corretora de consórcios e seguros", "Cargo": "Sócio ou Fundador", "Segmento": "Investimento | Financeiro", "Faturamento": "Menos de R$ 1 milhão", "Email": "luizotavioporto@gmail.com", "Telefone": "12983040069", "ICP": "nao", "Genero": "M"}, {"Nome": "Gustavo Gobato Alves da Silva", "Empresa": "Arbon", "Cargo": "Sócio ou Fundador", "Segmento": "Recursos Humanos", "Faturamento": "Menos de R$ 1 milhão", "Email": "contatogobato@gmail.com", "Telefone": "11912634148", "ICP": "nao", "Genero": "M"}, {"Nome": "Mariana Paris Ribeiro dos Santos", "Empresa": "Mariana Paris designer de interiores", "Cargo": "Sócio ou Fundador", "Segmento": "Decoração - tapeçaria", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Contato@mariana-paris.com", "Telefone": "(11)96905-5524", "ICP": "icp", "Genero": "F"}, {"Nome": "Cristina Izabel viega da silveira", "Empresa": "Pizzaria OForno", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Entre R$ 3,6 milhões e R$ 5 milhões", "Email": "Cristinaviega@gmail.com", "Telefone": "51984526838", "ICP": "icp", "Genero": "F"}, {"Nome": "Rafael Nakamoto", "Empresa": "Nakamoto Marketing", "Cargo": "Sócio ou Fundador", "Segmento": "Marketing", "Faturamento": "Menos de R$ 1 milhão", "Email": "rafaelnko@gmail.com", "Telefone": "11980320001", "ICP": "nao", "Genero": "M"}, {"Nome": "Lina", "Empresa": "Bourbon", "Cargo": "Gerente", "Segmento": "Hotelaria", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "ligiosa@hotmail.com", "Telefone": "11993190501", "ICP": "icp", "Genero": "F"}, {"Nome": "Tiago Ribeiro", "Empresa": "Ville Proteção", "Cargo": "Diretor", "Segmento": "Industria de confecção", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "tiago@villeprotecao.com.br", "Telefone": "11986480006", "ICP": "icp", "Genero": "M"}, {"Nome": "Augusto Franco Mota", "Empresa": "DSOP", "Cargo": "Diretor", "Segmento": "Educação", "Faturamento": "Entre R$ 8 milhões e R$ 10 milhões", "Email": "augusto@dsoplabs.com.br", "Telefone": "11955403678", "ICP": "icp", "Genero": "M"}, {"Nome": "Juliano Paraizo", "Empresa": "PEAD BRASIL", "Cargo": "Gerente", "Segmento": "Construção Civil  | Incorporadora", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "juliano@peadbrasil.com.br", "Telefone": "(19)99202-2247", "ICP": "icp", "Genero": "M"}, {"Nome": "ALEXANDRE PERIC", "Empresa": "AP Informação", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "alexandre@apinformacao.com.br", "Telefone": "11991990093", "ICP": "icp", "Genero": "M"}, {"Nome": "Diego milanez Torres cesar", "Empresa": "Infinity Veículos", "Cargo": "Gerente", "Segmento": "Veículos", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Infinity1veiculos@gmail.com.br", "Telefone": "81987242083", "ICP": "icp", "Genero": "M"}, {"Nome": "Danilo Norcia", "Empresa": "Awer Consultoria", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Menos de R$ 1 milhão", "Email": "danilo@awer.co", "Telefone": "(11) 971815592", "ICP": "nao", "Genero": "M"}, {"Nome": "Artur Landi", "Empresa": "Vault Capital", "Cargo": "Sócio ou Fundador", "Segmento": "Investimento | Financeiro", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "arturlandi@vaultcapital.com.br", "Telefone": "11991448787", "ICP": "icp", "Genero": "M"}, {"Nome": "Michell Santos de Moura", "Empresa": "MMOURA Engenharia", "Cargo": "Sócio ou Fundador", "Segmento": "Construção Civil  | Incorporadora", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "michelsnt@hotmail.com", "Telefone": "11 91626-0831", "ICP": "icp", "Genero": "M"}, {"Nome": "Christiano de Miranda Rodrigues", "Empresa": "Miranda Advogados", "Cargo": "Sócio ou Fundador", "Segmento": "Serviços", "Faturamento": "Menos de R$ 1 milhão", "Email": "christiano.mra@gmail.com", "Telefone": "11998902781", "ICP": "nao", "Genero": "M"}, {"Nome": "Alexandre Pardo", "Empresa": "Centro pedagógico", "Cargo": "Sócio ou Fundador", "Segmento": "Educação", "Faturamento": "Menos de R$ 1 milhão", "Email": "pardo74@icloud.com", "Telefone": "11996144352", "ICP": "nao", "Genero": "M"}, {"Nome": "Givaldo Marques da Silva", "Empresa": "Wikimee", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "givaldo.silva@wikimee.com", "Telefone": "(11) 99236-2273", "ICP": "icp", "Genero": "M"}, {"Nome": "Lucas Diego silva", "Empresa": "MS estética avançada", "Cargo": "Sócio ou Fundador", "Segmento": "Estética", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "lucas.diego123@hotmail.com", "Telefone": "19996719304", "ICP": "icp", "Genero": "M"}, {"Nome": "Gil Fernando Oliveira Duque Junior", "Empresa": "Vegas vigilancia", "Cargo": "Diretor", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "gilduquejunior@gmail.com", "Telefone": "24992967691", "ICP": "icp", "Genero": "M"}, {"Nome": "JULIO BOTELHO", "Empresa": "IBRACEM", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 8 milhões e R$ 10 milhões", "Email": "DIRETORIA@IBRACEM.ORG.BR", "Telefone": "11996381000", "ICP": "icp", "Genero": "M"}, {"Nome": "Cristiana Ávila de Figueirêdo", "Empresa": "Eliel Figueirêdo Laboratório e Imagem", "Cargo": "Gerente", "Segmento": "Saúde", "Faturamento": "Entre R$ 50 milhões e R$ 100 milhões", "Email": "cristianaf@elielfigueiredo.com.br", "Telefone": "21967503097", "ICP": "icp", "Genero": "F"}, {"Nome": "Taynara Braga Paiva", "Empresa": "HS Marketing", "Cargo": "Presidente ou CEO", "Segmento": "Marketing", "Faturamento": "Entre R$ 8 milhões e R$ 10 milhões", "Email": "taynara.hsmkt@gmail.com", "Telefone": "11939331030", "ICP": "icp", "Genero": "F"}, {"Nome": "Thamires Piva", "Empresa": "HS Marketing", "Cargo": "Coordenador", "Segmento": "Marketing", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "thamipiva@gmail.com", "Telefone": "(11)95550-5484", "ICP": "icp", "Genero": "F"}, {"Nome": "Amalia Roque", "Empresa": "Multa Delete", "Cargo": "Sócio ou Fundador", "Segmento": "Serviços Jurídicos", "Faturamento": "Menos de R$ 1 milhão", "Email": "amalia@multadelete.com.br", "Telefone": "11964278125", "ICP": "nao", "Genero": "F"}, {"Nome": "Adriano Cuco", "Empresa": "Alugai Brasil", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "adriano@alugaibrasil.com.br", "Telefone": "19999963239", "ICP": "icp", "Genero": "M"}, {"Nome": "Tobias Oliveira e Silva", "Empresa": "Zacca", "Cargo": "Sócio ou Fundador", "Segmento": "E- commerce | Marketplace", "Faturamento": "Entre R$ 3,6 milhões e R$ 5 milhões", "Email": "tobiasoliveiraesilva1@gmail.com", "Telefone": "54996364750", "ICP": "icp", "Genero": "M"}, {"Nome": "Denise Vieira", "Empresa": "Oticas Carol", "Cargo": "Diretor", "Segmento": "Comercio (Oticas)", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "denisevieira.oticascarol@hotmail.com", "Telefone": "(15)99838-4337", "ICP": "icp", "Genero": "F"}, {"Nome": "Osivan de Sousa Mello", "Empresa": "Global Quality Foods Ltda", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "osivan.mello@globalquality.com.br", "Telefone": "11996594820", "ICP": "icp", "Genero": "M"}, {"Nome": "ROSANGELA RABELO DE SOUZA SOARES", "Empresa": "CLINICA POPULAR DO TRABALHADOR", "Cargo": "Sócio ou Fundador", "Segmento": "SAUDE", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "advrosangelarabelo@gmail.com", "Telefone": "96984125900", "ICP": "icp", "Genero": "F"}, {"Nome": "Bruno Correia Brito", "Empresa": "Yoru Lamen", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Menos de R$ 1 milhão", "Email": "Brunocorreia0@hotmail.com", "Telefone": "11981330880", "ICP": "nao", "Genero": "M"}, {"Nome": "Vinicius Maciel", "Empresa": "Ville", "Cargo": "Coordenador", "Segmento": "Indústria de manufatura", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "vinicius@villeprotecao.com.br", "Telefone": "11915547262", "ICP": "icp", "Genero": "M"}, {"Nome": "Adriano Miranda da silva lima", "Empresa": "Estação campineira", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "adriano.m.s.lima@gmail.com", "Telefone": "19991662341", "ICP": "icp", "Genero": "M"}, {"Nome": "Thiago Vieira", "Empresa": "HS Marketing", "Cargo": "Coordenador", "Segmento": "Marketing", "Faturamento": "Entre R$ 3,6 milhões e R$ 5 milhões", "Email": "thiagofelipeemp@gmail.com", "Telefone": "11958944004", "ICP": "icp", "Genero": "M"}, {"Nome": "Welma Almeida", "Empresa": "Brinquedos", "Cargo": "Gerente", "Segmento": "Alimentos | Bebidas", "Faturamento": "Menos de R$ 1 milhão", "Email": "welmaalmeida142@gmail.com", "Telefone": "62994528571", "ICP": "nao", "Genero": "F"}, {"Nome": "Thalita Grabert Triandafelides", "Empresa": "Atlas Corporate", "Cargo": "Sócio ou Fundador", "Segmento": "consultoria empresarial", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "thalita.triandafelides@atlascorporate.com.br", "Telefone": "19998174905", "ICP": "icp", "Genero": "F"}, {"Nome": "Raquel calzado Dima", "Empresa": "Atlas Corporate Ltda", "Cargo": "Sócio ou Fundador", "Segmento": "Consultoria Tributária", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Raquel.calzado@atlascorporate.com.br", "Telefone": "(19)99321-4395", "ICP": "icp", "Genero": "F"}, {"Nome": "Luiz Felipe de Carvalho", "Empresa": "Atlas Corporate", "Cargo": "Sócio ou Fundador", "Segmento": "Consultoria empresarial e soluções tributarias", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "felipe.carvalho@atlascorporate.com.br", "Telefone": "19991563331", "ICP": "icp", "Genero": "M"}, {"Nome": "Felipe da Silva Martins", "Empresa": "Ainda não tenho", "Cargo": "Sócio ou Fundador", "Segmento": "Vendas", "Faturamento": "Menos de R$ 1 milhão", "Email": "conta", "Telefone": "11989448311", "ICP": "nao", "Genero": "M"}, {"Nome": "Maria de Lourdes Ávila de Almeida Garofalo", "Empresa": "RIO VESTY", "Cargo": "Sócio ou Fundador", "Segmento": "Varejista", "Faturamento": "Menos de R$ 1 milhão", "Email": "lurdinhaavila@hotmail.com", "Telefone": "(21)96474-7041", "ICP": "nao", "Genero": "F"}, {"Nome": "Claudio Garofalo", "Empresa": "RioVesty", "Cargo": "Sócio ou Fundador", "Segmento": "Varejista", "Faturamento": "Menos de R$ 1 milhão", "Email": "claudiogarofalo59@hitmail.com21", "Telefone": "21983171277", "ICP": "nao", "Genero": "M"}, {"Nome": "Bruno Romão ferreira", "Empresa": "Mcompany", "Cargo": "Coordenador", "Segmento": "Marketing", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Bruromao9@gmail.com", "Telefone": "15997531399", "ICP": "icp", "Genero": "M"}, {"Nome": "Marianna Scarinci", "Empresa": "Scarinci Sociedade de Advogados", "Cargo": "Sócio ou Fundador", "Segmento": "Jurídico", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "marianna@scarinci.adv.br", "Telefone": "19992246577", "ICP": "icp", "Genero": "F"}, {"Nome": "Emerson Queiroz", "Empresa": "Mogiana Foods", "Cargo": "Sócio ou Fundador", "Segmento": "Alimentos | Bebidas", "Faturamento": "Entre R$ 5 milhões e R$ 8 milhões", "Email": "emersonq@gmail.com", "Telefone": "19998386138", "ICP": "icp", "Genero": "M"}, {"Nome": "Lucas Ricardo Leme", "Empresa": "DECORA Home Design", "Cargo": "Sócio ou Fundador", "Segmento": "E- commerce | Marketplace", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "lucasricardoleme@hotmail.com", "Telefone": "19974201221", "ICP": "icp", "Genero": "M"}, {"Nome": "Susana Cruz", "Empresa": "DECORA HOME DESIGN", "Cargo": "Sócio ou Fundador", "Segmento": "E- commerce | Marketplace", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "vendas@decoraexterno.com.br", "Telefone": "19994733232", "ICP": "icp", "Genero": "F"}, {"Nome": "Cristiana Figueirêdo", "Empresa": "Eliel Figueiredo diagnósticos médicos", "Cargo": "Diretor", "Segmento": "Saúde", "Faturamento": "Entre R$ 50 milhões e R$ 100 milhões", "Email": "cristianaf@elielfigueiredo.com.br", "Telefone": "21967503097", "ICP": "icp", "Genero": "F"}, {"Nome": "Márcio das Neves Carvalho", "Empresa": "GIGACLIMA - VLRC INDÚSTRIA E COMÉRCIO LTDA.", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "marciocarvalho@gigaclima.com", "Telefone": "19 98877 3170", "ICP": "icp", "Genero": "M"}, {"Nome": "Thiago Aguiar Aparecido Ribeiro", "Empresa": "Lider Interiores", "Cargo": "Sócio ou Fundador", "Segmento": "Construção Civil  | Incorporadora", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "Thiago@liderrp.com.br", "Telefone": "(16)99708-6030", "ICP": "icp", "Genero": "M"}, {"Nome": "Márcio das Neves Carvalho", "Empresa": "Gigaclima - VLRC IND. E COM. LTDA.", "Cargo": "Sócio ou Fundador", "Segmento": "Tecnologia e Inovação", "Faturamento": "Entre R$ 10 milhões e R$ 50 milhões", "Email": "marciocarvalho@gigaclima.com", "Telefone": "19988773170", "ICP": "icp", "Genero": "M"}, {"Nome": "Renato Oliveira", "Empresa": "MetLife DVA", "Cargo": "Diretor", "Segmento": "Investimento | Financeiro", "Faturamento": "Mais de R$ 100 milhões", "Email": "renato@natools.com.br", "Telefone": "11974502201", "ICP": "icp", "Genero": "M"}, {"Nome": "Pérola de Fátima Fogaça", "Empresa": "FAVA ®️", "Cargo": "Sócio ou Fundador", "Segmento": "Desenvolvimento humano e tecnologia", "Faturamento": "Entre R$ 5 milhões e R$ 8 milhões", "Email": "Contato@artistaluzsol.com", "Telefone": "11 987660311", "ICP": "icp", "Genero": "F"}, {"Nome": "Victor Hugo Dias", "Empresa": "Giolaser", "Cargo": "Sócio ou Fundador", "Segmento": "Serviço", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "victorhd.ee@hotmail.com", "Telefone": "19998337349", "ICP": "icp", "Genero": "M"}, {"Nome": "Ahmed Elgammal", "Empresa": "Darko imob", "Cargo": "Sócio ou Fundador", "Segmento": "Construção Civil  | Incorporadora", "Faturamento": "Entre R$ 8 milhões e R$ 10 milhões", "Email": "ahmed@darkoimob.com.br", "Telefone": "16982553826", "ICP": "icp", "Genero": "M"}, {"Nome": "Marco aurelio Oliveira soares", "Empresa": "Óticas carol", "Cargo": "Sócio ou Fundador", "Segmento": "Saude ocular", "Faturamento": "Menos de R$ 1 milhão", "Email": "M.a.o.soares@hotmail.com", "Telefone": "15996306055", "ICP": "nao", "Genero": "M"}, {"Nome": "Renan Callegon Martinhão", "Empresa": "XSeeds", "Cargo": "Sócio ou Fundador", "Segmento": "Educação", "Faturamento": "Menos de R$ 1 milhão", "Email": "renan.martinhao@xseeds.com.br", "Telefone": "11984754181", "ICP": "nao", "Genero": "M"}, {"Nome": "Maisa Vieira", "Empresa": "HS Marketing", "Cargo": "Analista", "Segmento": "Marketing", "Faturamento": "Entre R$ 3,6 milhões e R$ 5 milhões", "Email": "Maaisavieira2@gmail.com", "Telefone": "(11)94809-2138", "ICP": "icp", "Genero": "F"}, {"Nome": "Alexandre De Carvalho Salomone Junior", "Empresa": "Renova Auto Center", "Cargo": "Sócio ou Fundador", "Segmento": "Oficina", "Faturamento": "Entre R$ 1 milhão e R$ 3,6 milhões", "Email": "Ale_salomone@hotmail.com", "Telefone": "11 93006-4552", "ICP": "icp", "Genero": "M"}];
 
-const FAT_ORDER = ["Menos de R$ 1 milhão","Entre R$ 1 milhão e R$ 3,6 milhões","Entre R$ 3,6 milhões e R$ 5 milhões","Entre R$ 5 milhões e R$ 8 milhões","Entre R$ 8 milhões e R$ 10 milhões","Entre R$ 10 milhões e R$ 50 milhões","Entre R$ 50 milhões e R$ 100 milhões","Mais de R$ 100 milhões"];
+const FAT_ORDER = [
+  "Menos de R$ 1 milhão","Entre R$ 1 milhão e R$ 3,6 milhões",
+  "Entre R$ 3,6 milhões e R$ 5 milhões","Entre R$ 5 milhões e R$ 8 milhões",
+  "Entre R$ 8 milhões e R$ 10 milhões","Entre R$ 10 milhões e R$ 50 milhões",
+  "Entre R$ 50 milhões e R$ 100 milhões","Mais de R$ 100 milhões"
+];
 
 let filtered = [...RAW];
 let sortCol = 'ICP', sortDir = -1;
@@ -300,69 +434,67 @@ let icpFilter = 'all';
 function populateFilters() {
   const fats = [...new Set(RAW.map(r => r.Faturamento))].filter(Boolean).sort((a,b) => FAT_ORDER.indexOf(a) - FAT_ORDER.indexOf(b));
   const segs = [...new Set(RAW.map(r => r.Segmento))].filter(Boolean).sort();
-  const fatSel = document.getElementById('filterFat');
-  const segSel = document.getElementById('filterSeg');
-  fats.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; fatSel.appendChild(o); });
-  segs.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; segSel.appendChild(o); });
+  fats.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; document.getElementById('filterFat').appendChild(o); });
+  segs.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; document.getElementById('filterSeg').appendChild(o); });
 }
 
-function updateKPIs(data) {
+function updateKPIs() {
   const total = RAW.length;
   const icp = RAW.filter(r => r.ICP === 'icp').length;
   const nao = RAW.filter(r => r.ICP === 'nao').length;
-  document.getElementById('kpi-total').textContent = total;
   document.getElementById('kpi-icp').textContent = icp;
   document.getElementById('kpi-nao').textContent = nao;
-  document.getElementById('kpi-icp-pct').textContent = ((icp/total)*100).toFixed(1)+'% do total';
-  document.getElementById('kpi-nao-pct').textContent = ((nao/total)*100).toFixed(1)+'% do total';
-  document.getElementById('kpi-taxa').textContent = ((icp/total)*100).toFixed(0)+'%';
+  document.getElementById('kpi-taxa').textContent = ((icp/total)*100).toFixed(0) + '%';
+  document.getElementById('kpi-icp-sub').textContent = ((icp/total)*100).toFixed(1) + '% do total';
+  document.getElementById('kpi-nao-sub').textContent = ((nao/total)*100).toFixed(1) + '% do total';
 }
 
-let chartICP, chartFat, chartSeg;
 function initCharts() {
   Chart.defaults.color = '#888899';
   Chart.defaults.font.family = 'Sora';
 
   const icp = RAW.filter(r=>r.ICP==='icp').length;
   const nao = RAW.filter(r=>r.ICP==='nao').length;
-  chartICP = new Chart(document.getElementById('chartICP'), {
+  new Chart(document.getElementById('chartICP'), {
     type: 'doughnut',
-    data: { labels: ['ICP Ideal','Fora do ICP'], datasets: [{ data: [icp, nao], backgroundColor: ['#22c55e','#f87171'], borderWidth: 0, hoverOffset: 6 }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '68%', plugins: { legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 }, boxWidth: 10 } } } }
+    data: { labels: ['ICP Ideal','Fora do ICP'], datasets: [{ data: [icp,nao], backgroundColor: ['#22c55e','#f87171'], borderWidth: 0, hoverOffset: 5 }] },
+    options: { responsive:true, maintainAspectRatio:false, cutout:'65%',
+      plugins: { legend: { position:'bottom', labels:{ padding:12, font:{size:11}, boxWidth:10 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} (${((ctx.parsed/(icp+nao))*100).toFixed(1)}%)` } } } }
   });
 
   const masc = RAW.filter(r=>r.Genero==='M').length;
   const fem  = RAW.filter(r=>r.Genero==='F').length;
   new Chart(document.getElementById('chartGenero'), {
     type: 'doughnut',
-    data: { labels: ['Masculino','Feminino'], datasets: [{ data: [masc, fem], backgroundColor: ['#60a5fa','#f472b6'], borderWidth: 0, hoverOffset: 6 }] },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '68%',
-      plugins: {
-        legend: { position: 'bottom', labels: { padding: 14, font: { size: 11 }, boxWidth: 10 } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} (${((ctx.parsed/(masc+fem))*100).toFixed(1)}%)` } }
-      }
-    }
+    data: { labels: ['Masculino','Feminino'], datasets: [{ data: [masc,fem], backgroundColor: ['#60a5fa','#f472b6'], borderWidth: 0, hoverOffset: 5 }] },
+    options: { responsive:true, maintainAspectRatio:false, cutout:'65%',
+      plugins: { legend: { position:'bottom', labels:{ padding:12, font:{size:11}, boxWidth:10 } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} (${((ctx.parsed/(masc+fem))*100).toFixed(1)}%)` } } } }
   });
 
   const fatCounts = {};
   FAT_ORDER.forEach(f => { fatCounts[f] = RAW.filter(r=>r.Faturamento===f).length; });
-  const fatColors = FAT_ORDER.map(f => f === 'Menos de R$ 1 milhão' ? '#f87171' : '#22c55e');
+  const fatColors = FAT_ORDER.map(f => f==='Menos de R$ 1 milhão' ? '#f87171' : '#22c55e');
   const fatLabels = FAT_ORDER.map(f => f.replace('Entre R$ ','').replace('Mais de R$ ','> ').replace('Menos de R$ ','< '));
-  chartFat = new Chart(document.getElementById('chartFat'), {
+  new Chart(document.getElementById('chartFat'), {
     type: 'bar',
-    data: { labels: fatLabels, datasets: [{ data: Object.values(fatCounts), backgroundColor: fatColors, borderRadius: 4, borderSkipped: false }] },
-    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { size: 10 } } }, y: { grid: { display: false }, ticks: { font: { size: 9 } } } } }
+    data: { labels: fatLabels, datasets: [{ data: Object.values(fatCounts), backgroundColor: fatColors, borderRadius: 3, borderSkipped: false }] },
+    options: { responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins: { legend:{display:false} },
+      scales: { x:{ grid:{color:'rgba(255,255,255,0.04)'}, ticks:{font:{size:9}} }, y:{ grid:{display:false}, ticks:{font:{size:9}} } } }
   });
 
   const icpOnly = RAW.filter(r=>r.ICP==='icp');
   const segCounts = {};
   icpOnly.forEach(r => { segCounts[r.Segmento] = (segCounts[r.Segmento]||0)+1; });
   const topSegs = Object.entries(segCounts).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  chartSeg = new Chart(document.getElementById('chartSeg'), {
+  new Chart(document.getElementById('chartSeg'), {
     type: 'bar',
-    data: { labels: topSegs.map(s=>s[0]), datasets: [{ data: topSegs.map(s=>s[1]), backgroundColor: topSegs.map((_,i)=>i===0?'#22c55e':'rgba(34,197,94,0.35)'), borderRadius: 4, borderSkipped: false }] },
-    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { size: 10 } } }, y: { grid: { display: false }, ticks: { font: { size: 10 } } } } }
+    data: { labels: topSegs.map(s=>s[0]), datasets: [{ data: topSegs.map(s=>s[1]), backgroundColor: topSegs.map((_,i)=>i===0?'#22c55e':'rgba(34,197,94,0.32)'), borderRadius: 3, borderSkipped: false }] },
+    options: { responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins: { legend:{display:false} },
+      scales: { x:{ grid:{color:'rgba(255,255,255,0.04)'}, ticks:{font:{size:9}} }, y:{ grid:{display:false}, ticks:{font:{size:10}} } } }
   });
 }
 
@@ -371,15 +503,15 @@ function setICP(val) {
   ['all','icp','nao'].forEach(v => {
     const btn = document.getElementById('btn-'+v);
     btn.className = 'toggle-btn';
-    if (v === val) btn.classList.add(v === 'all' ? 'active-all' : v === 'icp' ? 'active-icp' : 'active-nao');
+    if (v === val) btn.classList.add(v==='all'?'active-all':v==='icp'?'active-icp':'active-nao');
   });
   applyFilters();
 }
 
 function applyFilters() {
   const search = document.getElementById('search').value.toLowerCase();
-  const fat = document.getElementById('filterFat').value;
-  const seg = document.getElementById('filterSeg').value;
+  const fat    = document.getElementById('filterFat').value;
+  const seg    = document.getElementById('filterSeg').value;
   filtered = RAW.filter(r => {
     if (search && !`${r.Nome} ${r.Empresa} ${r.Cargo} ${r.Email}`.toLowerCase().includes(search)) return false;
     if (fat && r.Faturamento !== fat) return false;
@@ -389,8 +521,8 @@ function applyFilters() {
   });
   filtered.sort((a,b) => {
     let av = a[sortCol]||'', bv = b[sortCol]||'';
-    if (sortCol === 'Faturamento') { av = FAT_ORDER.indexOf(av); bv = FAT_ORDER.indexOf(bv); return (av-bv)*sortDir; }
-    if (sortCol === 'ICP') { const order = {icp:0, nao:1}; return ((order[av]??2)-(order[bv]??2))*sortDir; }
+    if (sortCol==='Faturamento') { av=FAT_ORDER.indexOf(av); bv=FAT_ORDER.indexOf(bv); return (av-bv)*sortDir; }
+    if (sortCol==='ICP') { const o={icp:0,nao:1}; return ((o[av]??2)-(o[bv]??2))*sortDir; }
     return av.localeCompare(bv,'pt-BR')*sortDir;
   });
   page = 1;
@@ -402,15 +534,13 @@ function resetFilters() {
   document.getElementById('filterFat').value = '';
   document.getElementById('filterSeg').value = '';
   icpFilter = 'all';
-  ['all','icp','nao'].forEach(v => {
-    document.getElementById('btn-'+v).className = 'toggle-btn' + (v==='all'?' active-all':'');
-  });
+  ['all','icp','nao'].forEach(v => { document.getElementById('btn-'+v).className = 'toggle-btn'+(v==='all'?' active-all':''); });
   applyFilters();
 }
 
 function sortBy(col) {
-  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
-  document.querySelectorAll('th').forEach(th => th.classList.remove('sorted'));
+  if (sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=1; }
+  document.querySelectorAll('th').forEach(t=>t.classList.remove('sorted'));
   const el = document.getElementById('th-'+col);
   if (el) el.classList.add('sorted');
   applyFilters();
@@ -425,37 +555,70 @@ function renderTable() {
   const totalPages = Math.max(1, Math.ceil(total/PER_PAGE));
   const start = (page-1)*PER_PAGE;
   const slice = filtered.slice(start, start+PER_PAGE);
+
   document.getElementById('result-count').textContent = total;
   document.getElementById('page-info').textContent = `${start+1}–${Math.min(start+PER_PAGE,total)} de ${total}`;
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = slice.map(r => {
-    const rowClass = r.ICP === 'icp' ? 'row-icp' : 'row-nao-icp';
-    const badgeClass = r.ICP === 'icp' ? 'icp' : 'nao';
-    const badgeLabel = r.ICP === 'icp' ? '✦ ICP Ideal' : '✕ Fora do ICP';
-    const emailDisplay = r.Email && r.Email !== 'nan' && r.Email.includes('@') ? `<a href="mailto:${r.Email}">${r.Email}</a>` : (r.Email || '—');
-    const telDisplay = r.Telefone && r.Telefone !== 'nan' && r.Telefone !== '0' ? r.Telefone : '—';
-    return `<tr class="${rowClass}">
+
+  // Desktop table rows
+  document.getElementById('tableBody').innerHTML = slice.map(r => {
+    const rc = r.ICP==='icp'?'row-icp':'row-nao';
+    const bc = r.ICP==='icp'?'icp':'nao';
+    const bl = r.ICP==='icp'?'✦ ICP Ideal':'✕ Fora do ICP';
+    const em = r.Email && r.Email!=='nan' && r.Email.includes('@') ? `<a href="mailto:${r.Email}">${r.Email}</a>` : (r.Email||'—');
+    const tel = r.Telefone && r.Telefone!=='nan' && r.Telefone!=='0' ? r.Telefone : '—';
+    return `<tr class="${rc}">
       <td><div class="name-cell"><div class="avatar">${initials(r.Nome)}</div><div><div class="name-text">${r.Nome}</div><div class="empresa-text">${r.Empresa}</div></div></div></td>
       <td>${r.Cargo}</td>
       <td>${r.Segmento}</td>
       <td><span class="fat-chip">${r.Faturamento}</span></td>
-      <td><span class="icp-badge ${badgeClass}">${badgeLabel}</span></td>
-      <td><div class="contact-cell"><div class="contact-email">${emailDisplay}</div><div class="contact-tel">${telDisplay}</div></div></td>
+      <td><span class="icp-badge ${bc}">${bl}</span></td>
+      <td><div class="contact-cell"><div class="contact-email">${em}</div><div class="contact-tel">${tel}</div></div></td>
     </tr>`;
   }).join('');
+
+  // Mobile cards
+  document.getElementById('mobileCards').innerHTML = slice.map(r => {
+    const rc = r.ICP==='icp'?'row-icp':'row-nao';
+    const bc = r.ICP==='icp'?'icp':'nao';
+    const bl = r.ICP==='icp'?'✦ ICP Ideal':'✕ Fora do ICP';
+    const em = r.Email && r.Email!=='nan' && r.Email.includes('@') ? `<a href="mailto:${r.Email}">${r.Email}</a>` : (r.Email||'—');
+    const tel = r.Telefone && r.Telefone!=='nan' && r.Telefone!=='0' ? r.Telefone : '—';
+    return `<div class="mobile-card ${rc}">
+      <div class="mc-top">
+        <div class="avatar">${initials(r.Nome)}</div>
+        <div class="mc-info">
+          <div class="mc-name">${r.Nome}</div>
+          <div class="mc-empresa">${r.Empresa}</div>
+        </div>
+        <span class="icp-badge ${bc}">${bl}</span>
+      </div>
+      <div class="mc-body">
+        <div class="mc-field"><label>Cargo</label><span>${r.Cargo}</span></div>
+        <div class="mc-field"><label>Segmento</label><span>${r.Segmento}</span></div>
+        <div class="mc-field"><label>Faturamento</label><span>${r.Faturamento}</span></div>
+        <div class="mc-field"><label>Contato</label><span class="contact-email">${em}</span></div>
+      </div>
+      <div class="mc-footer">
+        <span class="contact-tel" style="font-size:11px;color:var(--text-dim)">${tel}</span>
+        <span class="fat-chip">${r.Faturamento}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Pagination
   const pb = document.getElementById('page-buttons');
   pb.innerHTML = '';
   const addBtn = (label, p, active, disabled) => {
     const btn = document.createElement('button');
-    btn.className = 'page-btn' + (active?' active':'');
+    btn.className = 'page-btn'+(active?' active':'');
     btn.textContent = label; btn.disabled = disabled;
-    btn.onclick = () => { page = p; renderTable(); };
+    btn.onclick = () => { page = p; renderTable(); window.scrollTo({top:0,behavior:'smooth'}); };
     pb.appendChild(btn);
   };
   addBtn('‹', page-1, false, page===1);
   for (let i=1; i<=totalPages; i++) {
     if (totalPages<=7 || i===1 || i===totalPages || Math.abs(i-page)<=1) addBtn(i, i, i===page, false);
-    else if (Math.abs(i-page)===2) { const s=document.createElement('span'); s.textContent='…'; s.style.cssText='padding:6px 4px;color:var(--text-dim);font-size:12px'; pb.appendChild(s); }
+    else if (Math.abs(i-page)===2) { const s=document.createElement('span'); s.textContent='…'; s.style.cssText='padding:5px 3px;color:var(--text-dim);font-size:12px'; pb.appendChild(s); }
   }
   addBtn('›', page+1, false, page===totalPages);
 }
